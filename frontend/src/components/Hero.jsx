@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import BackgroundVideo from "./BackgroundVideo";
+import logo from "../assets/logo.png";
 
 function Hero() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ function Hero() {
       <div style={styles.container}>
         <div style={styles.card}>
           <h1 style={styles.title}>Luisao Parfums</h1>
+          <img src={logo} alt="Luisao Parfums" style={styles.logo} />
           <p style={styles.subtitle}>
             Descubre fragancias que cuentan tu historia.
           </p>
@@ -43,6 +45,14 @@ const styles = {
   title: {
     fontSize: "3rem",
     marginBottom: "20px"
+  },
+  logo: {
+    width: "180px",
+    height: "180px",
+    borderRadius: "50%",
+    objectFit: "cover",
+    marginBottom: "20px",
+    border: "2px solid #d4af37"
   },
   subtitle: {
     marginBottom: "30px"

@@ -84,11 +84,12 @@ const styles = {
   },
 image: {
   width: "100%",
-  height: "250px",        // puedes ajustar tamaño aquí
-  objectFit: "contain",   // 👈 CAMBIO IMPORTANTE
-  backgroundColor: "#000", // opcional, se ve más elegante
-  borderRadius: "10px"
-},  
+  height: "250px",
+  objectFit: "contain",
+  backgroundColor: "rgba(0,0,0,0.3)",  // ← fondo oscuro transparente que combina
+  borderRadius: "10px",
+  padding: "10px"  // ← pequeño espacio para que no toque los bordes
+},
   button: {
     marginTop: "15px",
     padding: "10px 20px",
