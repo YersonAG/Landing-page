@@ -17,14 +17,15 @@ function BackgroundVideo() {
 const styles = {
   video: {
     position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "100%",
-    height: "100%",
-    objectFit: "contain",   // ← cambia "cover" por "contain"
-    backgroundColor: "#000",
-    zIndex: -1
+    top: 0,
+    left: 0,
+    width: "100vw",
+    height: "100vh",
+    objectFit: "cover",
+    zIndex: -1,
+    willChange: "transform",
+    transform: "translateZ(0)",
+    WebkitTransform: "translateZ(0)"
   }
 };
 

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import BackgroundVideo from "./BackgroundVideo";
 
 const products = [
@@ -22,7 +23,27 @@ const products = [
 ];
 
 function Products() {
-  const phoneNumber = "573116845894"; // cambia por tu número
+  const phoneNumber = "573116845894";
+  const cardsRef = useRef([]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("scroll-fade");
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    cardsRef.current.forEach((card) => {
+      if (card) observer.observe(card);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleWhatsApp = (productName) => {
     const message = `Hola, quiero preguntar por el perfume ${productName}`;
@@ -34,11 +55,17 @@ function Products() {
     <>
       <BackgroundVideo />
       <div style={styles.container}>
-        <h1 style={styles.title}>Nuestra Colección</h1>
-
+        <h1 style={styles.title} className="animate-fadeSlideUp">
+          Nuestra Colección
+        </h1>
         <div style={styles.grid}>
-          {products.map((product) => (
-            <div key={product.id} style={styles.card}>
+          {products.map((product, index) => (
+            <div
+              key={product.id}
+              ref={(el) => (cardsRef.current[index] = el)}
+              style={styles.card}
+              className="product-card"
+            >
               <img
                 src={product.image}
                 alt={product.name}
@@ -48,6 +75,7 @@ function Products() {
               <p>{product.description}</p>
               <button
                 style={styles.button}
+                className="btn-shimmer"
                 onClick={() => handleWhatsApp(product.name)}
               >
                 Pregunta por este producto
@@ -76,29 +104,31 @@ const styles = {
     gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
     gap: "30px"
   },
-  card: {
+card: {
     backgroundColor: "rgba(0,0,0,0.6)",
     padding: "20px",
     borderRadius: "15px",
-    textAlign: "center"
-  },
-image: {
-  width: "100%",
-  height: "250px",
-  objectFit: "contain",
-  backgroundColor: "rgba(0,0,0,0.3)",  // ← fondo oscuro transparente que combina
-  borderRadius: "10px",
-  padding: "10px"  // ← pequeño espacio para que no toque los bordes
+    textAlign: "center",
+    border: "1px solid #d4af37",                        // ← borde dorado
+    boxShadow: "0 0 15px rgba(212, 175, 55, 0.3)"       // ← brillo sutil
 },
-  button: {
-    marginTop: "15px",
-    padding: "10px 20px",
-    border: "none",
-    borderRadius: "20px",
-    backgroundColor: "#d4af37",
-    cursor: "pointer",
-    fontWeight: "bold"
-  }
+  image: {
+    width: "100%",
+    height: "250px",
+    objectFit: "contain",
+    backgroundColor: "rgba(0,0,0,0.3)",
+    borderRadius: "10px",
+    padding: "10px"
+  },
+button: {
+  marginTop: "15px",
+  padding: "10px 20px",
+  border: "none",
+  borderRadius: "20px",
+  cursor: "pointer",
+  fontWeight: "bold",
+  color: "#000"  // ← agrega esto
+},
 };
 
 export default Products;

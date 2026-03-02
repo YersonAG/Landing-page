@@ -6,4 +6,92 @@
 
 body {
   font-family: Arial, sans-serif;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  overflow-x: hidden;
+}
+
+html {
+  height: -webkit-fill-available;
+}
+
+/* Fade + slide hacia arriba */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Brillo deslizante en botón */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Fade in para scroll */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeSlideUp {
+  animation: fadeSlideUp 0.8s ease forwards;
+}
+
+.animate-fadeSlideUp-delay {
+  opacity: 0;
+  animation: fadeSlideUp 0.8s ease 0.3s forwards;
+}
+
+.animate-fadeSlideUp-delay2 {
+  opacity: 0;
+  animation: fadeSlideUp 0.8s ease 0.6s forwards;
+}
+
+.btn-shimmer {
+  background: linear-gradient(
+    90deg,
+    #b8960c 0%,
+    #d4af37 50%,
+    #b8960c 100%
+  );
+  background-size: 200% auto;
+  transition: background-position 0.5s ease, transform 0.2s ease;
+  color: #000 !important;
+}
+
+.btn-shimmer:hover {
+  animation: shimmer 1.2s linear infinite;
+  transform: scale(1.05);
+  color: #000 !important;
+  opacity: 1 !important;
+}
+
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.3);
+}
+
+.scroll-fade {
+  opacity: 0;
+  animation: fadeIn 0.7s ease forwards;
+}
+
+.social-card {
+  transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.social-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212, 175, 55, 0.8) !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
 }
