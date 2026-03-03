@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-const API = "http://localhost:3000";
+const API = "https://luisao.onrender.com";
 
 export default function Products() {
   const phoneNumber = "573116845894";
