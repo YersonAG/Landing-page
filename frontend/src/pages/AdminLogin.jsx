@@ -9,7 +9,7 @@ export default function AdminLogin() {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post('http://localhost:3000/auth/login', form);
+      const res = await axios.post('https://luisao.onrender.com/auth/login', form);
       localStorage.setItem('admin_token', res.data.access_token);
       navigate('/admin/dashboard');
     } catch {
