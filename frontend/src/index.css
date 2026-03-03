@@ -1,97 +1,307 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap');
 
-body {
-  font-family: Arial, sans-serif;
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
+/* ─── RESET & BASE ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
   overflow-x: hidden;
 }
 
-html {
-  height: -webkit-fill-available;
+body {
+  background: #030303;
+  color: #f0e6d0;
+  font-family: 'Montserrat', sans-serif;
+  overflow-x: hidden;
+  cursor: default;
 }
 
-/* Fade + slide hacia arriba */
-@keyframes fadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ─── CSS VARIABLES ─────────────────────────────────────── */
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201, 168, 76, 0.3);
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(201, 168, 76, 0.15);
+  --dark: #030303;
+  --surface: rgba(10, 8, 5, 0.85);
 }
 
-/* Brillo deslizante en botón */
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+/* ─── KEYFRAMES ─────────────────────────────────────────── */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Fade in para scroll */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-.animate-fadeSlideUp {
-  animation: fadeSlideUp 0.8s ease forwards;
+@keyframes slideLeft {
+  from { opacity: 0; transform: translateX(-60px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-.animate-fadeSlideUp-delay {
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(60px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.2), 0 0 60px rgba(201,168,76,0.05); }
+  50%       { box-shadow: 0 0 40px rgba(201,168,76,0.4), 0 0 80px rgba(201,168,76,0.15); }
+}
+
+@keyframes shimmerLine {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-12px) rotate(1deg); }
+  66%       { transform: translateY(-6px) rotate(-1deg); }
+}
+
+@keyframes letterReveal {
+  from { opacity: 0; transform: translateY(20px) rotateX(40deg); }
+  to   { opacity: 1; transform: translateY(0) rotateX(0deg); }
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes particleFloat {
+  0%   { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(-20px) translateX(30px) scale(1); opacity: 0; }
+}
+
+@keyframes rotateSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─── UTILITY ANIMATION CLASSES ────────────────────────── */
+
+.anim-fadeUp        { animation: fadeUp 0.9s cubic-bezier(.16,1,.3,1) both; }
+.anim-fadeUp-d1     { animation: fadeUp 0.9s cubic-bezier(.16,1,.3,1) 0.2s both; }
+.anim-fadeUp-d2     { animation: fadeUp 0.9s cubic-bezier(.16,1,.3,1) 0.4s both; }
+.anim-fadeUp-d3     { animation: fadeUp 0.9s cubic-bezier(.16,1,.3,1) 0.6s both; }
+.anim-fadeUp-d4     { animation: fadeUp 0.9s cubic-bezier(.16,1,.3,1) 0.8s both; }
+.anim-scaleIn       { animation: scaleIn 1s cubic-bezier(.16,1,.3,1) 0.3s both; }
+
+/* ─── SCROLL REVEAL (triggered by JS) ──────────────────── */
+
+.reveal {
   opacity: 0;
-  animation: fadeSlideUp 0.8s ease 0.3s forwards;
+  transform: translateY(50px);
+  transition: opacity 0.9s cubic-bezier(.16,1,.3,1), transform 0.9s cubic-bezier(.16,1,.3,1);
+}
+.reveal.from-left  { transform: translateX(-60px); }
+.reveal.from-right { transform: translateX(60px); }
+.reveal.scale-in   { transform: scale(0.85); }
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1);
 }
 
-.animate-fadeSlideUp-delay2 {
-  opacity: 0;
-  animation: fadeSlideUp 0.8s ease 0.6s forwards;
+.reveal.visible.delay-1 { transition-delay: 0.1s; }
+.reveal.visible.delay-2 { transition-delay: 0.2s; }
+.reveal.visible.delay-3 { transition-delay: 0.3s; }
+.reveal.visible.delay-4 { transition-delay: 0.4s; }
+.reveal.visible.delay-5 { transition-delay: 0.5s; }
+
+/* ─── GLASSMORPHISM CARD ───────────────────────────────── */
+
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  transition: transform 0.4s cubic-bezier(.16,1,.3,1),
+              box-shadow 0.4s ease,
+              border-color 0.3s ease;
 }
 
-.btn-shimmer {
-  background: linear-gradient(
-    90deg,
-    #b8960c 0%,
-    #d4af37 50%,
-    #b8960c 100%
-  );
-  background-size: 200% auto;
-  transition: background-position 0.5s ease, transform 0.2s ease;
-  color: #000 !important;
-}
-
-.btn-shimmer:hover {
-  animation: shimmer 1.2s linear infinite;
-  transform: scale(1.05);
-  color: #000 !important;
-  opacity: 1 !important;
-}
-
-.product-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.product-card:hover {
+.glass-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(201,168,76,0.12);
+  border-color: rgba(201,168,76,0.35);
 }
 
-.scroll-fade {
+/* ─── PRODUCT CARD 3D ──────────────────────────────────── */
+
+.product-card-3d {
+  background: linear-gradient(145deg, rgba(20,16,10,0.9), rgba(8,6,3,0.95));
+  border: 1px solid rgba(201,168,76,0.12);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(.16,1,.3,1),
+              box-shadow 0.4s ease;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  position: relative;
+}
+
+.product-card-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 50%, rgba(201,168,76,0.03) 100%);
   opacity: 0;
-  animation: fadeIn 0.7s ease forwards;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.social-card {
-  transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+.product-card-3d:hover::before { opacity: 1; }
+
+.product-card-3d:hover {
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(201,168,76,0.25),
+    0 0 60px rgba(201,168,76,0.08);
 }
 
-.social-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(212, 175, 55, 0.8) !important;
-  background-color: rgba(255, 255, 255, 0.15) !important;
+/* shimmer sweep on hover */
+.product-card-3d::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.08), transparent);
+  transition: left 0.6s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+.product-card-3d:hover::after { left: 150%; }
+
+/* ─── GOLD BUTTON ──────────────────────────────────────── */
+
+.btn-gold {
+  position: relative;
+  padding: 14px 36px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  color: var(--gold);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  transition: color 0.3s ease;
+}
+
+.btn-gold::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(.16,1,.3,1);
+  z-index: -1;
+}
+
+.btn-gold:hover { color: #030303; }
+.btn-gold:hover::before { transform: scaleX(1); }
+
+/* ─── SOCIAL CARD ──────────────────────────────────────── */
+
+.social-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  text-decoration: none;
+}
+
+.social-pill:hover {
+  background: rgba(201,168,76,0.08);
+  border-color: rgba(201,168,76,0.3);
+  transform: translateY(-3px);
+}
+
+/* ─── GOLD DIVIDER ─────────────────────────────────────── */
+
+.gold-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto;
+}
+
+/* ─── LETTER REVEAL ────────────────────────────────────── */
+
+.letter-reveal span {
+  display: inline-block;
+  opacity: 0;
+  animation: letterReveal 0.6s cubic-bezier(.16,1,.3,1) both;
+}
+
+/* ─── PARTICLES ────────────────────────────────────────── */
+
+.particle {
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particleFloat linear infinite;
+  z-index: 0;
+}
+
+/* ─── SCROLLBAR ────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #030303; }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ─── SECTION TITLES ───────────────────────────────────── */
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  color: #f0e6d0;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+/* ─── RESPONSIVE ───────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .glass-card { border-radius: 16px; }
+  .product-card-3d { border-radius: 16px; }
+  .btn-gold { padding: 12px 28px; font-size: 0.7rem; }
 }
