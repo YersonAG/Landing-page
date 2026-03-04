@@ -4,48 +4,58 @@ import {
   UploadedFile, ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { ProductsService } from './products.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { v2 as cloudinary } from 'cloudinary';
+import { Readable } from 'stream';
 
-const storage = diskStorage({
-  destination: './uploads',
-  filename: (_, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, unique + extname(file.originalname));
-  },
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+async function uploadToCloudinary(file: Express.Multer.File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const upload = cloudinary.uploader.upload_stream(
+      { folder: 'luisaoparfums' },
+      (error: any, result: any) => {
+        if (error) reject(error);
+        else resolve(result.secure_url);
+      }
+    );
+    Readable.from(file.buffer).pipe(upload);
+  });
+}
 
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
 
-  // Ruta pública — la usa el frontend
   @Get()
   findAll() {
     return this.productsService.findAll();
   }
 
-  // Rutas protegidas — solo admin
   @UseGuards(JwtAuthGuard)
   @Post()
-  @UseInterceptors(FileInterceptor('image', { storage }))
-  create(@Body() body: any, @UploadedFile() file: Express.Multer.File) {
-    const imageUrl = file ? `/uploads/${file.filename}` : null;
+  @UseInterceptors(FileInterceptor('image'))
+  async create(@Body() body: any, @UploadedFile() file: Express.Multer.File) {
+    let imageUrl = null;
+    if (file) imageUrl = await uploadToCloudinary(file);
     return this.productsService.create({ ...body, imageUrl });
   }
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  @UseInterceptors(FileInterceptor('image', { storage }))
-  update(
+  @UseInterceptors(FileInterceptor('image'))
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: any,
     @UploadedFile() file: Express.Multer.File,
   ) {
     const data: any = { ...body };
-    if (file) data.imageUrl = `/uploads/${file.filename}`;
+    if (file) data.imageUrl = await uploadToCloudinary(file);
     return this.productsService.update(id, data);
   }
 
