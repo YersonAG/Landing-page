@@ -1,4 +1,4 @@
-import videoBg from "../assets/video.mp4";
+import videoBg from "../assets/videoop.mp4";
 
 function BackgroundVideo() {
   return (
@@ -8,6 +8,7 @@ function BackgroundVideo() {
         loop
         muted
         playsInline
+        preload="auto"
         style={styles.video}
       >
         <source src={videoBg} type="video/mp4" />
