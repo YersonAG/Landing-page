@@ -41,7 +41,7 @@ export class ProductsController {
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   async create(@Body() body: any, @UploadedFile() file: Express.Multer.File) {
-    let imageUrl = null;
+    let imageUrl: string | null = null;  // ← fix aquí
     if (file) imageUrl = await uploadToCloudinary(file);
     return this.productsService.create({ ...body, imageUrl });
   }
