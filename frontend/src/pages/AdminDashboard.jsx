@@ -51,7 +51,7 @@ export default function AdminDashboard() {
   const handleEdit = (product) => {
     setEditing(product);
     setForm({ name: product.name, description: product.description, image: null });
-    setPreview(product.imageUrl ? `${API}${product.imageUrl}` : null);
+    setPreview(product.imageUrl ? product.imageUrl : null);  // ← fix aquí
   };
 
   const handleDelete = async (id) => {
@@ -67,14 +67,12 @@ export default function AdminDashboard() {
 
   return (
     <div style={s.container}>
-      {/* Header */}
       <div style={s.header}>
         <h1 style={s.headerTitle}>Panel Admin — Luisao Parfums</h1>
         <button style={s.logoutBtn} onClick={handleLogout}>Cerrar sesión</button>
       </div>
 
       <div style={s.content}>
-        {/* Formulario */}
         <div style={s.formCard}>
           <h2 style={s.sectionTitle}>{editing ? '✏️ Editar producto' : '➕ Nuevo producto'}</h2>
 
@@ -112,14 +110,13 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Lista de productos */}
         <div style={s.listSection}>
           <h2 style={s.sectionTitle}>Productos ({products.length})</h2>
           <div style={s.productGrid}>
             {products.map(p => (
               <div key={p.id} style={s.productCard}>
                 {p.imageUrl && (
-                  <img src={`${API}${p.imageUrl}`} alt={p.name} style={s.productImg} />
+                  <img src={p.imageUrl} alt={p.name} style={s.productImg} />  // ← fix aquí
                 )}
                 <div style={s.productInfo}>
                   <p style={s.productName}>{p.name}</p>
