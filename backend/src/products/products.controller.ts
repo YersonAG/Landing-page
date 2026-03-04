@@ -9,12 +9,6 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
 async function uploadToCloudinary(file: Express.Multer.File): Promise<string> {
   return new Promise((resolve, reject) => {
     const upload = cloudinary.uploader.upload_stream(
@@ -30,7 +24,13 @@ async function uploadToCloudinary(file: Express.Multer.File): Promise<string> {
 
 @Controller('products')
 export class ProductsController {
-  constructor(private productsService: ProductsService) {}
+  constructor(private productsService: ProductsService) {
+    cloudinary.config({                                    // ← movido aquí
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+  }
 
   @Get()
   findAll() {
@@ -41,7 +41,7 @@ export class ProductsController {
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   async create(@Body() body: any, @UploadedFile() file: Express.Multer.File) {
-    let imageUrl: string | null = null;  // ← fix aquí
+    let imageUrl: string | null = null;
     if (file) imageUrl = await uploadToCloudinary(file);
     return this.productsService.create({ ...body, imageUrl });
   }
