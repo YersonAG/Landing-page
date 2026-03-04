@@ -16,7 +16,6 @@ export default function Products() {
       .catch(() => setProducts([]));
   }, []);
 
-  // Intersection Observer para scroll reveal
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -36,7 +35,6 @@ export default function Products() {
     return () => observer.disconnect();
   }, [products]);
 
-  // Efecto 3D tilt en hover
   const handleMouseMove = (e, id) => {
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
@@ -46,7 +44,6 @@ export default function Products() {
     const centerY = rect.height / 2;
     const rotateX = ((y - centerY) / centerY) * -8;
     const rotateY = ((x - centerX) / centerX) * 8;
-
     card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px) scale(1.02)`;
   };
 
@@ -73,7 +70,6 @@ export default function Products() {
         overflow: "hidden",
       }}
     >
-      {/* Fondo decorativo */}
       <div style={{
         position: "absolute",
         top: "20%",
@@ -85,7 +81,6 @@ export default function Products() {
         pointerEvents: "none",
       }} />
 
-      {/* Header de sección */}
       <div
         className="reveal"
         ref={el => { if (el) { const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) e.target.classList.add('visible'); }, { threshold: 0.2 }); obs.observe(el); }}}
@@ -121,7 +116,6 @@ export default function Products() {
         }} />
       </div>
 
-      {/* Sin productos */}
       {products.length === 0 && (
         <div style={{ textAlign: "center", padding: "60px 0" }}>
           <p style={{
@@ -136,7 +130,6 @@ export default function Products() {
         </div>
       )}
 
-      {/* Grid de productos */}
       <div style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
@@ -156,10 +149,9 @@ export default function Products() {
             onMouseLeave={handleMouseLeave}
             style={{ transition: "transform 0.4s cubic-bezier(.16,1,.3,1), box-shadow 0.4s ease" }}
           >
-            {/* Imagen */}
             <div style={{ position: "relative", overflow: "hidden", height: "280px" }}>
               <img
-                src={`${API}${product.imageUrl}`}
+                src={product.imageUrl}  // ← solo este cambio
                 alt={product.name}
                 style={{
                   width: "100%",
@@ -175,13 +167,11 @@ export default function Products() {
                   e.target.style.background = "rgba(201,168,76,0.04)";
                 }}
               />
-              {/* Overlay sobre imagen */}
               <div style={{
                 position: "absolute",
                 inset: 0,
                 background: "linear-gradient(180deg, transparent 40%, rgba(3,3,3,0.9) 100%)",
               }} />
-              {/* Número de producto */}
               <span style={{
                 position: "absolute",
                 top: "16px",
@@ -195,7 +185,6 @@ export default function Products() {
               </span>
             </div>
 
-            {/* Info */}
             <div style={{ padding: "24px" }}>
               <h3 style={{
                 fontFamily: "'Cormorant Garamond', serif",
