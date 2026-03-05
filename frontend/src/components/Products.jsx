@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 const API = "https://luisao.onrender.com";
 
@@ -7,7 +7,6 @@ function ProductModal({ product, onClose, phoneNumber }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // Bloquear scroll
     document.body.style.overflow = "hidden";
     requestAnimationFrame(() => setVisible(true));
     const onKey = (e) => e.key === "Escape" && handleClose();
@@ -69,7 +68,7 @@ function ProductModal({ product, onClose, phoneNumber }) {
             border: "1px solid rgba(201,168,76,0.25)",
             borderRadius: "50%",
             color: "#c9a84c",
-            fontSize: "18px",
+            fontSize: "16px",
             cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
             zIndex: 10,
@@ -82,44 +81,56 @@ function ProductModal({ product, onClose, phoneNumber }) {
           ✕
         </button>
 
-        {/* Imagen */}
-        <div style={{ position: "relative", height: "280px", overflow: "hidden" }}>
+        {/* Imagen completa sin recorte */}
+        <div style={{
+          position: "relative",
+          background: "rgba(6,4,2,0.95)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "280px",
+          maxHeight: "340px",
+          overflow: "hidden",
+        }}>
           <img
             src={product.imageUrl}
             alt={product.name}
             style={{
-              width: "100%", height: "100%",
-              objectFit: "cover",
+              width: "100%",
+              height: "auto",
+              maxHeight: "340px",
+              objectFit: "contain",   // ← imagen completa sin recorte
               display: "block",
-              transform: visible ? "scale(1)" : "scale(1.08)",
+              transform: visible ? "scale(1)" : "scale(1.05)",
               transition: "transform 0.6s cubic-bezier(.16,1,.3,1)",
+              padding: "16px",
             }}
             onError={e => {
-              e.target.style.objectFit = "contain";
               e.target.style.padding = "30px";
               e.target.style.background = "rgba(201,168,76,0.04)";
             }}
           />
           <div style={{
             position: "absolute", inset: 0,
-            background: "linear-gradient(180deg, transparent 30%, rgba(6,4,2,0.98) 100%)",
+            background: "linear-gradient(180deg, transparent 50%, rgba(6,4,2,0.98) 100%)",
+            pointerEvents: "none",
           }} />
           {/* Nombre sobre imagen */}
-          <div style={{ position: "absolute", bottom: "24px", left: "28px", right: "60px" }}>
+          <div style={{ position: "absolute", bottom: "20px", left: "24px", right: "56px" }}>
             <p style={{
               fontFamily: "'Montserrat', sans-serif",
-              fontSize: "0.58rem",
+              fontSize: "0.55rem",
               letterSpacing: "0.35em",
               textTransform: "uppercase",
               color: "rgba(201,168,76,0.7)",
-              marginBottom: "6px",
+              marginBottom: "5px",
             }}>
               Fragancia exclusiva
             </p>
             <h2 style={{
               fontFamily: "'Cormorant Garamond', serif",
               fontWeight: 300,
-              fontSize: "clamp(1.5rem, 4vw, 2rem)",
+              fontSize: "clamp(1.4rem, 4vw, 1.9rem)",
               color: "#f0e6d0",
               letterSpacing: "0.06em",
               lineHeight: 1.1,
@@ -130,14 +141,12 @@ function ProductModal({ product, onClose, phoneNumber }) {
         </div>
 
         {/* Contenido */}
-        <div style={{ padding: "28px" }}>
-          {/* Línea dorada */}
+        <div style={{ padding: "24px 28px 28px" }}>
           <div style={{
             width: "50px", height: "1px",
             background: "linear-gradient(90deg, #c9a84c, transparent)",
-            marginBottom: "20px",
+            marginBottom: "18px",
           }} />
-
           <p style={{
             fontFamily: "'Montserrat', sans-serif",
             fontWeight: 300,
@@ -149,8 +158,6 @@ function ProductModal({ product, onClose, phoneNumber }) {
           }}>
             {product.description}
           </p>
-
-          {/* Botón consultar */}
           <button
             className="btn-gold"
             onClick={handleWhatsApp}
@@ -167,7 +174,6 @@ function ProductModal({ product, onClose, phoneNumber }) {
 /* ─── SEARCH BAR ─────────────────────────────────────────── */
 function SearchBar({ value, onChange, isMobile }) {
   const [focused, setFocused] = useState(false);
-
   return (
     <div style={{
       position: "relative",
@@ -175,23 +181,17 @@ function SearchBar({ value, onChange, isMobile }) {
       width: "100%",
       margin: "0 auto 48px",
     }}>
-      {/* Icono lupa */}
-      <svg
-        width="16" height="16" viewBox="0 0 24 24" fill="none"
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
         style={{
-          position: "absolute",
-          left: "18px", top: "50%",
+          position: "absolute", left: "18px", top: "50%",
           transform: "translateY(-50%)",
-          pointerEvents: "none",
-          color: focused ? "#c9a84c" : "rgba(201,168,76,0.5)",
+          pointerEvents: "none", zIndex: 1,
           transition: "color 0.3s ease",
-          zIndex: 1,
         }}
       >
         <circle cx="11" cy="11" r="7" stroke={focused ? "#c9a84c" : "rgba(201,168,76,0.5)"} strokeWidth="1.5"/>
         <path d="M16.5 16.5L21 21" stroke={focused ? "#c9a84c" : "rgba(201,168,76,0.5)"} strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
-
       <input
         type="text"
         placeholder="Buscar perfume..."
@@ -201,9 +201,7 @@ function SearchBar({ value, onChange, isMobile }) {
         onBlur={() => setFocused(false)}
         style={{
           width: "100%",
-          background: focused
-            ? "rgba(201,168,76,0.06)"
-            : "rgba(255,255,255,0.03)",
+          background: focused ? "rgba(201,168,76,0.06)" : "rgba(255,255,255,0.03)",
           border: `1px solid ${focused ? "rgba(201,168,76,0.5)" : "rgba(201,168,76,0.15)"}`,
           borderRadius: "100px",
           padding: "14px 48px 14px 48px",
@@ -217,25 +215,19 @@ function SearchBar({ value, onChange, isMobile }) {
           WebkitAppearance: "none",
         }}
       />
-
-      {/* Botón limpiar */}
       {value && (
         <button
           onClick={() => onChange("")}
           style={{
-            position: "absolute",
-            right: "16px", top: "50%",
+            position: "absolute", right: "16px", top: "50%",
             transform: "translateY(-50%)",
             background: "rgba(201,168,76,0.15)",
-            border: "none",
-            borderRadius: "50%",
+            border: "none", borderRadius: "50%",
             width: "22px", height: "22px",
-            color: "#c9a84c",
-            fontSize: "12px",
+            color: "#c9a84c", fontSize: "12px",
             cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
-            transition: "background 0.2s ease",
-            lineHeight: 1,
+            transition: "background 0.2s ease", lineHeight: 1,
           }}
           onMouseEnter={e => e.currentTarget.style.background = "rgba(201,168,76,0.3)"}
           onMouseLeave={e => e.currentTarget.style.background = "rgba(201,168,76,0.15)"}
@@ -272,14 +264,35 @@ export default function Products() {
       .catch(() => setProducts([]));
   }, []);
 
+  // Observer que se re-ejecuta cuando filtered cambia
+  const filtered = products.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); }),
-      { threshold: 0.08, rootMargin: "0px 0px -20px 0px" }
-    );
-    cardRefs.current.forEach(card => { if (card) observer.observe(card); });
-    return () => observer.disconnect();
-  }, [products]);
+    // Pequeño delay para que el DOM actualice primero
+    const timer = setTimeout(() => {
+      const observer = new IntersectionObserver(
+        entries => entries.forEach(e => {
+          if (e.isIntersecting) e.target.classList.add("visible");
+        }),
+        { threshold: 0.05, rootMargin: "0px 0px -10px 0px" }
+      );
+      cardRefs.current.forEach(card => {
+        if (card) {
+          // Si ya está en el viewport, marcar visible directamente
+          const rect = card.getBoundingClientRect();
+          if (rect.top < window.innerHeight) {
+            card.classList.add("visible");
+          } else {
+            observer.observe(card);
+          }
+        }
+      });
+      return () => observer.disconnect();
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [filtered.length, search]); // ← se re-ejecuta al cambiar búsqueda
 
   const handleMouseMove = (e, id) => {
     if (isMobile) return;
@@ -301,14 +314,8 @@ export default function Products() {
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
-  // Filtro de búsqueda
-  const filtered = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
-
   return (
     <>
-      {/* Modal */}
       {selectedProduct && (
         <ProductModal
           product={selectedProduct}
@@ -329,10 +336,8 @@ export default function Products() {
           overflow: "hidden",
         }}
       >
-        {/* Fondo decorativo */}
         <div style={{
-          position: "absolute",
-          top: "20%", left: "50%",
+          position: "absolute", top: "20%", left: "50%",
           transform: "translateX(-50%)",
           width: isMobile ? "300px" : "600px",
           height: isMobile ? "300px" : "600px",
@@ -340,7 +345,7 @@ export default function Products() {
           pointerEvents: "none",
         }} />
 
-        {/* Header sección */}
+        {/* Header */}
         <div
           className="reveal"
           ref={el => {
@@ -355,8 +360,7 @@ export default function Products() {
         >
           <p style={{
             fontFamily: "'Montserrat', sans-serif",
-            fontSize: "0.6rem",
-            letterSpacing: "0.4em",
+            fontSize: "0.6rem", letterSpacing: "0.4em",
             textTransform: "uppercase",
             color: "rgba(201,168,76,0.7)",
             marginBottom: "16px",
@@ -381,7 +385,7 @@ export default function Products() {
           }} />
         </div>
 
-        {/* Barra de búsqueda */}
+        {/* Buscador */}
         <SearchBar value={search} onChange={setSearch} isMobile={isMobile} />
 
         {/* Sin resultados */}
@@ -400,8 +404,7 @@ export default function Products() {
             <button
               onClick={() => setSearch("")}
               style={{
-                background: "none",
-                border: "none",
+                background: "none", border: "none",
                 color: "rgba(201,168,76,0.6)",
                 fontFamily: "'Montserrat', sans-serif",
                 fontSize: "0.75rem",
@@ -415,7 +418,6 @@ export default function Products() {
           </div>
         )}
 
-        {/* Sin productos */}
         {products.length === 0 && (
           <div style={{ textAlign: "center", padding: "60px 0" }}>
             <p style={{
@@ -430,7 +432,7 @@ export default function Products() {
           </div>
         )}
 
-        {/* Grid de productos */}
+        {/* Grid */}
         <div style={{
           display: "grid",
           gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))",
@@ -460,49 +462,53 @@ export default function Products() {
                 } : {}),
               }}
             >
-              {/* Imagen */}
-              <div style={{ position: "relative", overflow: "hidden", height: isMobile ? "230px" : "280px" }}>
+              {/* Imagen card — completa sin recorte */}
+              <div style={{
+                position: "relative",
+                overflow: "hidden",
+                height: isMobile ? "240px" : "290px",
+                background: "rgba(8,6,3,0.95)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}>
                 <img
                   src={product.imageUrl}
                   alt={product.name}
                   style={{
-                    width: "100%", height: "100%",
-                    objectFit: "cover",
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",   // ← imagen completa sin recorte
+                    padding: "12px",
                     transition: "transform 0.6s cubic-bezier(.16,1,.3,1)",
-                    transform: (!isMobile && hoveredId === product.id) ? "scale(1.06)" : "scale(1)",
+                    transform: (!isMobile && hoveredId === product.id) ? "scale(1.05)" : "scale(1)",
                     display: "block",
                   }}
                   onError={e => {
-                    e.target.style.objectFit = "contain";
                     e.target.style.padding = "20px";
                     e.target.style.background = "rgba(201,168,76,0.04)";
                   }}
                 />
                 <div style={{
                   position: "absolute", inset: 0,
-                  background: "linear-gradient(180deg, transparent 35%, rgba(3,3,3,0.92) 100%)",
+                  background: "linear-gradient(180deg, transparent 50%, rgba(3,3,3,0.85) 100%)",
+                  pointerEvents: "none",
                 }} />
 
-                {/* Número */}
                 <span style={{
-                  position: "absolute",
-                  top: "14px", right: "14px",
+                  position: "absolute", top: "14px", right: "14px",
                   fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: "0.7rem",
-                  letterSpacing: "0.2em",
+                  fontSize: "0.7rem", letterSpacing: "0.2em",
                   color: "rgba(201,168,76,0.6)",
                 }}>
                   {String(index + 1).padStart(2, "0")}
                 </span>
 
-                {/* Hint "Ver más" al hover en desktop */}
+                {/* Overlay "Ver detalle" en desktop */}
                 {!isMobile && (
                   <div style={{
-                    position: "absolute",
-                    inset: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    position: "absolute", inset: 0,
+                    display: "flex", alignItems: "center", justifyContent: "center",
                     background: "rgba(0,0,0,0.45)",
                     opacity: hoveredId === product.id ? 1 : 0,
                     transition: "opacity 0.3s ease",
@@ -522,11 +528,10 @@ export default function Products() {
                   </div>
                 )}
 
-                {/* Badge disponible en móvil */}
+                {/* Badge móvil */}
                 {isMobile && (
                   <div style={{
-                    position: "absolute",
-                    bottom: "14px", left: "14px",
+                    position: "absolute", bottom: "14px", left: "14px",
                     display: "flex", alignItems: "center", gap: "6px",
                   }}>
                     <div style={{
@@ -536,8 +541,7 @@ export default function Products() {
                     }} />
                     <span style={{
                       fontFamily: "'Montserrat', sans-serif",
-                      fontSize: "0.58rem",
-                      letterSpacing: "0.2em",
+                      fontSize: "0.58rem", letterSpacing: "0.2em",
                       textTransform: "uppercase",
                       color: "rgba(201,168,76,0.8)",
                     }}>Disponible</span>
