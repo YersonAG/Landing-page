@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import videoBg from "../assets/videoop.mp4";
-import posterImg from "../assets/poster.jpg"; // ← tu imagen de fondo
+import posterImg from "../assets/poster2.jpg"; // ← tu imagen de fondo
 
 function BackgroundVideo() {
   const [videoReady, setVideoReady] = useState(false);
