@@ -1,24 +1,13 @@
 import { useState, useRef } from "react";
 import videoBg from "../assets/videoop.mp4";
-import posterImg from "../assets/poster4.jpg";
+import videoWebm from "../assets/Videofinal.webm";
 
 function BackgroundVideo() {
   const [videoReady, setVideoReady] = useState(false);
-  const isMobile = window.innerWidth < 768;
   const videoRef = useRef(null);
 
   return (
     <div style={styles.wrapper}>
-      {/* Poster — centro en móvil, izquierda en desktop */}
-      <div style={{
-        position: "absolute", inset: 0,
-        backgroundImage: `url(${posterImg})`,
-        backgroundSize: "cover",
-        backgroundPosition: isMobile ? "center center" : "left center",
-        zIndex: 0,
-      }} />
-
-      {/* Video igual que antes */}
       <video
         ref={videoRef}
         autoPlay
@@ -29,11 +18,11 @@ function BackgroundVideo() {
         onCanPlay={() => setVideoReady(true)}
         style={{
           ...styles.video,
-          zIndex: 1,
           opacity: videoReady ? 1 : 0,
           transition: "opacity 1.2s ease",
         }}
       >
+        <source src={videoWebm} type="video/webm" />
         <source src={videoBg} type="video/mp4" />
       </video>
     </div>
@@ -54,7 +43,7 @@ const styles = {
     top: 0, left: 0,
     width: "100%", height: "100%",
     objectFit: "cover",
-    objectPosition: "left center", // ← igual que antes
+    objectPosition: "left center",
   }
 };
 
