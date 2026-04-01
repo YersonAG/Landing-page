@@ -1,23 +1,24 @@
 import { useState, useRef } from "react";
 import videoBg from "../assets/videoop.mp4";
-import posterImg from "../assets/poster2.jpg"; // ← tu imagen de fondo
+import posterImg from "../assets/poster3.jpg";
 
 function BackgroundVideo() {
   const [videoReady, setVideoReady] = useState(false);
+  const isMobile = window.innerWidth < 768;
   const videoRef = useRef(null);
 
   return (
     <div style={styles.wrapper}>
-      {/* Poster visible instantáneamente */}
+      {/* Poster — centro en móvil, izquierda en desktop */}
       <div style={{
         position: "absolute", inset: 0,
         backgroundImage: `url(${posterImg})`,
         backgroundSize: "cover",
-        backgroundPosition: "left center",
+        backgroundPosition: isMobile ? "center center" : "left center",
         zIndex: 0,
       }} />
 
-      {/* Video hace fade in cuando está listo */}
+      {/* Video igual que antes */}
       <video
         ref={videoRef}
         autoPlay
@@ -53,7 +54,7 @@ const styles = {
     top: 0, left: 0,
     width: "100%", height: "100%",
     objectFit: "cover",
-    objectPosition: "left center",
+    objectPosition: "left center", // ← igual que antes
   }
 };
 
