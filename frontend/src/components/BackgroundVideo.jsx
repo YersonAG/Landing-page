@@ -23,7 +23,7 @@ function BackgroundVideo() {
         }}
       >
         <source src={videoWebm} type="video/webm" />
-        <source src={videoBg} type="video/mp4" />
+        {/* <source src={videoBg} type="video/mp4" /> */}
       </video>
     </div>
   );
